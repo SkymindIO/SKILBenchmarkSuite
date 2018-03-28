@@ -46,7 +46,18 @@ For this intial test we're simulating a 3-tier application architecture (client,
 
 ### Running the Client Benchmarking Code
 
-* [ todo ]
+Currently the client is meant to simulate a basic single application server calling a single SKIL model server.
+
+To test the client, clone the repo and then do `mvn package`
+
+To run the client:
+
+`java -jar ./target/SKILBenchmarkSuite-1.0-SNAPSHOT.jar --endpoint http://localhost:9008/endpoints/skil_benchmarks_deploy/model/benchmarks100kmodel/default/ --number_calls 100`
+
+where the endpoint parameter is where you created the model in the model server via the notebook in the notebook/ subdirectory. You can also configure how many calls will be performed from the test client and averaged together. Client will report something like:
+
+`Average inference round trip (100 trips total) took: 160 ms`
+
 
 ## Hardware Used for the Tests
 
