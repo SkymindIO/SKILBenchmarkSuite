@@ -7,6 +7,13 @@ full round-trip time is necessary to measure.
 
 The round-trip time includes request creation, inference time, response and JSON deserialization.
 
+## Known Results
+
+| Context | Hardware | Model | Concurrency | Average Roundtrip  |  Throughput |
+|---|---|---|---|---|---|
+| Dedicated, SKIL Docker | Intel(R) Core(TM) i7-6850K CPU @ 3.60GHz | Default | 12  | 2 ms  | 5180.91  |
+| Azure, SKIL Docker | Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz | Default | 12  | 2 ms  | 3515.81 TPS  |
+
 ## Benchmarking the SKIL Model Server
 
 The overall goal is to use a series of architectures (MLP, CNN, LSTM) at different parameter sizes to collect REST inference response times to build a chart similar to:
@@ -59,10 +66,3 @@ To run the client:
 where the endpoint parameter is where you created the model in the model server via the notebook in the notebook/ subdirectory. You can also configure how many calls will be performed from the test client and averaged together. Client will report something like:
 
 `Average inference round trip (100 trips total) took: 160 ms`
-
-
-## Known Results
-
-| Hardware | Model | Concurrency | Average Roundtrip  |  Throughput |
-|---|---|---|---|---|
-|  Intel i7-6700K | Default | 12  | 2 ms  | 5180.915407308458 TPS  |
