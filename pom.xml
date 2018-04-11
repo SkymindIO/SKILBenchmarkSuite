@@ -10,8 +10,6 @@
   <name>SKIL Benchmark Suite - 0.0.1</name>
   <url>http://www.skymind.ai</url>
 
-
-    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shadedClassifier>bin</shadedClassifier>
@@ -20,9 +18,9 @@
         <spark.version>1</spark.version>
         <nd4j.gpu.backend>nd4j-cuda-8.0-platform</nd4j.gpu.backend>
         <nd4j.cpu.backend>nd4j-native-platform</nd4j.cpu.backend>
-        <nd4j.version>0.9.2-SNAPSHOT</nd4j.version>
-        <datavec.version>0.9.2-SNAPSHOT</datavec.version>
-        <dl4j.version>0.9.2-SNAPSHOT</dl4j.version>
+        <nd4j.version>0.9.1</nd4j.version>
+        <datavec.version>0.9.1</datavec.version>
+        <dl4j.version>0.9.1</dl4j.version>
         
         <mapdb.version>3.0.2</mapdb.version>
         <slf4j.version>1.7.12</slf4j.version>
@@ -158,6 +156,19 @@
                 </configuration>
             </plugin>
 
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>fully.qualified.MainClass</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
