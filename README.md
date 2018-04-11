@@ -45,16 +45,16 @@ For this intial test we're simulating a 3-tier application architecture (client,
 
 Currently the client is meant to simulate a basic single application server calling a single SKIL model server.
 
-To test the client:
+To build the client:
 
 ```
 git clone https://github.com/skymindio/SKILBenchmarkSuite.git
-mvn package
+mvn clean compile assembly:single
 ```
 
 To run the client:
 
-`java -jar ./target/SKILBenchmarkSuite-1.0-SNAPSHOT.jar --endpoint http://localhost:9008/endpoints/skil_benchmarks_deploy/model/benchmarks100kmodel/default/ --number_calls 4000 --concurrency 12`
+`java -cp ./target/SKILBenchmarkSuite-1.0-SNAPSHOT-jar-with-dependencies.jar ai.skymind.BenchmarkRoundTrip --endint http://localhost:9008/endpoints/benchmark/model/benchmarkidentity/default/ --number_calls 4000 --concurrency 4`
 
 where the endpoint parameter is where you created the model in the model server via the notebook in the notebook/ subdirectory. You can also configure how many calls will be performed from the test client and averaged together. Client will report something like:
 
