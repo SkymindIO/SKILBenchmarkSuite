@@ -63,6 +63,6 @@ where the endpoint parameter is where you created the model in the model server 
 
 ## Known Results
 
-| Hardware | Concurrency | Average Roundtrip  |  Throughput |
-|---|---|---|---|
-|  Intel i7-6700K | 12  | 2 ms  | 5180.915407308458 TPS  |
+| Hardware | Model | Concurrency | Average Roundtrip  |  Throughput |
+|---|---|---|---|---|
+|  Intel i7-6700K | Default | 12  | 2 ms  | 5180.915407308458 TPS  |
