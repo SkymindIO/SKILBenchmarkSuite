@@ -11,6 +11,7 @@ The round-trip time includes request creation, inference time, response and JSON
 
 | Context | Hardware | Model | Concurrency | Average Roundtrip  |  Throughput |
 |---|---|---|---|---|---|
+| Azure, SKIL Docker | Intel(R) Xeon(R) CPU E5-2673 v3 @ 2.40GHz | Default | 40  | 6 ms  | 5941.79 TPS  |
 | Dedicated, SKIL Docker | Intel(R) Core(TM) i7-6850K CPU @ 3.60GHz | Default | 12  | 2 ms  | 5180.91 TPS  |
 | Azure, SKIL Docker | Intel(R) Xeon(R) Platinum 8168 CPU @ 2.70GHz | Default | 12  | 2 ms  | 3515.81 TPS  |
 
