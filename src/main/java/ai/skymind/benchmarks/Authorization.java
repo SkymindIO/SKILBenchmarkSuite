@@ -1,4 +1,4 @@
-package ai.skymind;
+package ai.skymind.benchmarks;
 
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;

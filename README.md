@@ -61,7 +61,7 @@ mvn clean compile assembly:single
 
 To run the client:
 
-`java -cp ./target/SKILBenchmarkSuite-1.0-SNAPSHOT-jar-with-dependencies.jar ai.skymind.BenchmarkRoundTrip --endint http://localhost:9008/endpoints/benchmark/model/benchmarkidentity/default/ --number_calls 4000 --concurrency 4`
+`java -cp ./target/SKILBenchmarkSuite-1.0-SNAPSHOT-jar-with-dependencies.jar ai.skymind.benchmarks.RoundTripBench --endint http://localhost:9008/endpoints/benchmark/model/benchmarkidentity/default/ --number_calls 4000 --concurrency 4`
 
 where the endpoint parameter is where you created the model in the model server via the notebook in the notebook/ subdirectory. You can also configure how many calls will be performed from the test client and averaged together. Client will report something like:
 

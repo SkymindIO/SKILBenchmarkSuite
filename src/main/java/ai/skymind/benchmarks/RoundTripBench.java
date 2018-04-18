@@ -1,27 +1,21 @@
-package ai.skymind;
+package ai.skymind.benchmarks;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import com.beust.jcommander.JCommander;
+import com.mashape.unirest.http.Unirest;
+import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.serde.base64.Nd4jBase64;
-
-import static org.nd4j.linalg.indexing.NDArrayIndex.interval;
-
-
-import com.mashape.unirest.http.Unirest;
-
-import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.*;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.JCommander;
-
-
-import org.slf4j.LoggerFactory;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 
 
 /**
@@ -31,28 +25,21 @@ import ch.qos.logback.classic.Logger;
  * @author Justin Long (crockpotveggies)
  *
  */
-public class BenchmarkRoundTrip {
+@Slf4j
+public class RoundTripBench implements IBench {
 
-    private static class Args {
-        @Parameter(names="--endpoint", description="Endpoint for classification", required=true)
-        private String skilInferenceEndpoint = ""; // EXAMPLE: "http://localhost:9008/endpoints/yolo/model/yolo/default/";
-
-        @Parameter(names="--number_calls", description="Number of client calls to measure", required=false)
-        private int numberCalls = 8000;
-
-        @Parameter(names="--concurrency", description="Number of concurrent calls", required=false)
-        private int concurrency = 11;
-
-        @Parameter(names="--array_shape", description="Shape of the input array", required=false)
-        private String arrayShape = "1";
-    }
-
-    static Args args = new Args();
+    static Args args;
 	String auth_token = null;
 	String inputBase64 = null;
 	long totalBenchTime = 0L;
+    ExecutorService executor;
 
-    public BenchmarkRoundTrip() throws IOException {
+    public RoundTripBench() throws IOException {
+        this(new Args());
+    }
+    
+    public RoundTripBench(Args args) throws IOException {
+        this.args = args;
         // get shape from launch args
         String[] dimensions = args.arrayShape.split(",");
         int[] shape = new int[dimensions.length];
@@ -64,22 +51,27 @@ public class BenchmarkRoundTrip {
     }
 
     public static void main( String[] args ) throws Exception {
-  		BenchmarkRoundTrip m = new BenchmarkRoundTrip();
+  		RoundTripBench m = new RoundTripBench();
         JCommander.newBuilder()
-                .addObject(BenchmarkRoundTrip.args)
+                .addObject(RoundTripBench.args)
                 .build()
                 .parse(args);
 
-        m.runBenchmarks();
+        m.run();
     }
 
-    public void runBenchmarks() throws Exception, IOException {
+    public void stop() {
+        log.info("Attempting to stop benchmark...");
+        executor.shutdown();
+    }
+
+    public void run() throws Exception {
         Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         root.setLevel(Level.ERROR);
 
-    	System.out.println( "Running main benchmark routine..." ); 
-    	System.out.println( "Benchmarking single model server performance (calls: " + args.numberCalls + ")" ); 
-    	System.out.println( "Endpoint: " + args.skilInferenceEndpoint ); 
+    	log.info( "Running main benchmark routine..." ); 
+    	log.info( "Benchmarking single model server performance (calls: " + args.numberCalls + ")" ); 
+    	log.info( "Endpoint: " + args.skilInferenceEndpoint ); 
 
 
         if (auth_token == null) {
@@ -87,8 +79,8 @@ public class BenchmarkRoundTrip {
             long time = System.nanoTime();
             auth_token = auth.getAuthToken( "admin", "admin" );
             time = System.nanoTime() - time;
-            System.out.println("Getting the auth token took: " + time / 1000000 + " ms");
-            System.out.println( "auth token: " + auth_token + "\n" );
+            log.info("Getting the auth token took: " + time / 1000000 + " ms");
+            log.info( "auth token: " + auth_token + "\n" );
         }
 
         parallelInference(auth_token);
@@ -96,8 +88,8 @@ public class BenchmarkRoundTrip {
         long avg_time = totalBenchTime / args.numberCalls;
         double throughput = 1e+9 / avg_time * Long.valueOf(args.concurrency);
 
-        System.out.println("Average inference round trip (" + args.numberCalls + " trips total) took: " + avg_time / 1000000 + " ms");
-        System.out.println("Total throughput: " + throughput + " TPS");
+        log.info("Average inference round trip (" + args.numberCalls + " trips total) took: " + avg_time / 1000000 + " ms");
+        log.info("Total throughput: " + throughput + " TPS");
     }
 
     private void parallelInference( String auth_token ) throws InterruptedException, ExecutionException {
@@ -106,7 +98,7 @@ public class BenchmarkRoundTrip {
             tasks.add(new Task(auth_token));
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool(args.concurrency);
+        executor = Executors.newFixedThreadPool(args.concurrency);
         List<Future<Long>> results = executor.invokeAll(tasks);
         for(Future<Long> result : results){
             totalBenchTime += result.get();
